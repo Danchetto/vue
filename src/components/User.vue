@@ -25,23 +25,26 @@
     get timeLeft () {
       const now = dayjs.utc()
       const dataTime = dayjs(this.data.registered.date, 'YYYY-MM-DDTHH:MM:SS')
+      console.log(this.data.registered.date)
 
-      return dayjs.duration(now.diff(dataTime)).humanize()
-      // const timeDiff = now.diff(dataTime)
+      // return dayjs.duration(now.diff(dataTime)).humanize()
+      const timeDiff = now.diff(dataTime)
 
       // console.log(now, timeDiff, dayjs.duration(1, 'minute').milliseconds())
 
-      // if (timeDiff < dayjs.duration(1, 'minute').milliseconds()) {
-      //   return 'just now'
-      // }
+      if (timeDiff < dayjs.duration(1, 'minute').milliseconds()) {
+        return 'just now'
+      }
 
-      // if (timeDiff < dayjs.duration(1, 'hour').milliseconds()) {
-      //   return `${dayjs(timeDiff).minute()}m ago`
-      // }
+      if (timeDiff < dayjs.duration(1, 'hour').milliseconds()) {
+        return `${dayjs.duration(timeDiff).format('M')}m ago`
+      }
 
-      // if (dataTime.date() === now.date()) {
-      //   return `${dayjs(timeDiff).hour()}h ago`
-      // }
+      if (dataTime.date() === now.date()) {
+        return `${dayjs.duration(timeDiff).format('H')}h ago`
+      }
+
+      return dayjs.duration(timeDiff).humanize()
     }
   }
 

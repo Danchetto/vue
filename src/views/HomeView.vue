@@ -40,7 +40,7 @@
   })
 
   export default class HomeView extends Vue {
-    public leftTimeValue: string = dayjs().format('HH MM ss')
+    public leftTimeValue: string = dayjs.duration(dayjs().endOf('day').diff(dayjs())).format('H [H] M [M] ss [s]')
 
     @users.State
     public allUsers!: Record<string, any>
@@ -77,11 +77,9 @@
     timer() {
       setInterval(() => {
         const endOfDay = dayjs().endOf('day')
-        console.log(endOfDay)
-        const timeDiff = dayjs.duration(dayjs().diff(endOfDay)).humanize()
-        console.log(timeDiff)
+        const timeDiff = dayjs.duration(endOfDay.diff(dayjs())).format('H [H] M [M] ss [s]')
         this.leftTimeValue = timeDiff
-      }, 3000)
+      }, 1000)
     }
 
     mounted() {
