@@ -23,7 +23,9 @@ class UsersModule extends VuexModule {
   @Action({ rawError: true })
   public async loadUsers(): Promise<void> {
     const newUsers = await getUsers()
-    this.context.commit('setUsers', _sortBy(newUsers, (user: Record<string, any>) => -dayjs(user.registered.date, 'YYYY-MM-DDTHH:MM:SS').valueOf()))
+    this.context.commit('setUsers', _sortBy(
+      newUsers, 
+    (user: Record<string, any>) => -dayjs(user.registered.date, 'YYYY-MM-DDTHH:MM:SS').valueOf()))
   }
 
   @Action({ rawError: true })

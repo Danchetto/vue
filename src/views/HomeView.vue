@@ -3,14 +3,16 @@
   <div class="home">
     <div class="banner">
       <div class="banner__title">Left until the draw</div>
-      <div class="banner__value">{{ leftTimeValue }}</div>
+      <div class="banner__value">{{ timeLeftValue }}</div>
     </div>
     <div class="header">
-      <span class="header__text">Participant</span>
-      <span class="header__text">work email</span>
-      <span class="header__text">signed up</span>
+      <div class="header__content">
+        <span class="header__text">Participant</span>
+        <span class="header__text">work email</span>
+        <span class="header__text">signed up</span>
+      </div>
     </div>
-    <div v-for="user in visibleUsers" :key="user.id">
+    <div v-for="user in visibleUsers" :key="user.login.uuid">
       <user :data="user" />
     </div>
   </div>
@@ -18,15 +20,13 @@
 
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator'
+  import { namespace } from 'vuex-class'
   import dayjs from 'dayjs'
   import duration from 'dayjs/plugin/duration'
-  import utc from 'dayjs/plugin/utc'
   import relativeTime from 'dayjs/plugin/relativeTime'
 
   import User from '@/components/User.vue'
 
-  import { namespace } from 'vuex-class'
-  dayjs.extend(utc)
   dayjs.extend(duration)
   dayjs.extend(relativeTime)
 
@@ -40,7 +40,7 @@
   })
 
   export default class HomeView extends Vue {
-    public leftTimeValue: string = dayjs.duration(dayjs().endOf('day').diff(dayjs())).format('H [H] M [M] ss [s]')
+    public timeLeftValue: string = this.getTimeToEndOdTheDay()
 
     @users.State
     public allUsers!: Record<string, any>
@@ -62,6 +62,11 @@
       this.loadUsers()
     }
 
+    getTimeToEndOdTheDay() {
+      const endOfDay = dayjs().endOf('day')
+      return dayjs.duration(endOfDay.diff(dayjs())).format('H[H] m[M] s[S]')
+    }
+
     scroll() {
       window.onscroll = () => {
         let bottomOfWindow = Math.max(
@@ -76,9 +81,7 @@
 
     timer() {
       setInterval(() => {
-        const endOfDay = dayjs().endOf('day')
-        const timeDiff = dayjs.duration(endOfDay.diff(dayjs())).format('H [H] M [M] ss [s]')
-        this.leftTimeValue = timeDiff
+        this.timeLeftValue = this.getTimeToEndOdTheDay()
       }, 1000)
     }
 
@@ -97,11 +100,11 @@
     font-weight: 600;
     color: black;
     max-width: 1000px;
-    margin: 0 auto 50px;
+    margin: 60px auto 50px;
 
     &__title {
-    font-size: 12px;
-    line-height: 24px;
+      font-size: 12px;
+      line-height: 24px;
     }
 
     &__value {
@@ -112,18 +115,25 @@
 
   .header {
     position: relative;
-    display: flex;
     max-width: 1000px;
-    justify-content: space-between;
-    align-items: center;
     margin: 0 auto;
-    // padding: 50px 20px 70px;
+
+    &__content {
+      display: flex;
+      margin-left: 68px;
+    }
 
     &__text {
-      font-family: Open Sans;
+      min-width: calc(100% / 3);
+      max-width: calc(100% / 3);
       font-size: 12px;
       line-height: 24px;
       color: #808080;
+      align-self: center;
+
+      &:last-child {
+        padding-left: 100px;
+      }
     }
   }
 </style>
